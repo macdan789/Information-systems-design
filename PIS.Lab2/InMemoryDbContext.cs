@@ -23,9 +23,9 @@ public class InMemoryDbContext
         DataSet = new DataSet();
         DataSet.Tables.AddRange(new DataTable[] { Job, Worker, WorkerJob, ResidentialOperatingOffice });
 
-        DataSet.Relations.Add("ROOWorker", ResidentialOperatingOffice.Columns["ShortName"], Worker.Columns["ROOName"], true);
-        DataSet.Relations.Add("WorkerWorkerJob", Worker.Columns["WorkerID"], WorkerJob.Columns["WorkerID"], true);
-        DataSet.Relations.Add("JobWorkerJob", Job.Columns["JobID"], WorkerJob.Columns["JobID"], true);
+        DataSet.Relations.Add("ROO_Worker", ResidentialOperatingOffice.Columns["ShortName"], Worker.Columns["ROOName"], true);
+        DataSet.Relations.Add("Worker_WorkerJob", Worker.Columns["WorkerID"], WorkerJob.Columns["WorkerID"], true);
+        DataSet.Relations.Add("Job_WorkerJob", Job.Columns["JobID"], WorkerJob.Columns["JobID"], true);
 
         InsertTestData();
     }
@@ -138,7 +138,7 @@ public class InMemoryDbContext
             new object[] { null, "Job 3" },
             new object[] { null, "Job 4" },
             new object[] { null, "Job 5" }
-};
+        };
         foreach (object[] row in jobRows)
             Job.Rows.Add(row);
 
@@ -149,7 +149,7 @@ public class InMemoryDbContext
             new object[] { null, 1, 3 },
             new object[] { null, 3, 4 },
             new object[] { null, 3, 5 }
-};
+        };
         foreach (object[] row in workerJobRows)
             WorkerJob.Rows.Add(row);
     }
