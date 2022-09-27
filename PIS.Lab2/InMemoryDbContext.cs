@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text;
 
 namespace PIS.Lab2;
 
@@ -154,18 +155,33 @@ public class InMemoryDbContext
             WorkerJob.Rows.Add(row);
     }
 
+    private void ShowDataView(DataView view)
+    {
+        StringBuilder builder = new();
+        for (int i = 0; i < view.Count; i++)
+        {
+            builder.AppendFormat("{0,-14}", view[i]["ShortName"]);
+            builder.AppendFormat("{0,-14}", view[i]["LongName"]);
+            builder.AppendFormat("{0,-14}", view[i]["City"]);
+            builder.Append('\n');
+        }
+        Console.WriteLine(builder.ToString());
+    }
+
     #endregion
 
     public void ShowTable(DataTable table)
     {
         ArgumentNullException.ThrowIfNull(table);
 
-        Console.WriteLine($"[{table.TableName}]");
+        StringBuilder builder = new();
+
+        builder.AppendLine($"Table: [{table.TableName}]");
         foreach (DataColumn col in table.Columns)
         {
-            Console.Write("{0,-14}", col.ColumnName);
+            builder.AppendFormat("{0,-14}", col.ColumnName);
         }
-        Console.WriteLine();
+        builder.Append('\n');
 
         foreach (DataRow row in table.Rows)
         { 
@@ -173,14 +189,14 @@ public class InMemoryDbContext
             {
                 foreach (DataColumn col in table.Columns)
                 {
-                    Console.Write("{0,-14}", row[col]);
+                    builder.AppendFormat("{0,-14}", row[col]);
                 }
-                Console.Write('\t');
+                builder.Append('\t');
             }
-            Console.Write(row.RowState);
-            Console.WriteLine();
+            builder.Append($"{row.RowState}\n");
         }
-        Console.WriteLine();
+
+        Console.WriteLine(builder.ToString());
     }
 
     public void ShowAllTables()
@@ -215,17 +231,5 @@ public class InMemoryDbContext
 
         Console.WriteLine("Filter by City column:");
         ShowDataView(view);
-    }
-
-    private void ShowDataView(DataView view)
-    {
-        for (int i = 0; i < view.Count; i++)
-        {
-            Console.Write("{0,-14}", view[i]["ShortName"]);
-            Console.Write("{0,-14}", view[i]["LongName"]);
-            Console.Write("{0,-14}", view[i]["City"]);
-            Console.WriteLine();
-        }
-        Console.WriteLine();
     }
 }
