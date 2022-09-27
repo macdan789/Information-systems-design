@@ -160,6 +160,7 @@ public class InMemoryDbContext
     {
         ArgumentNullException.ThrowIfNull(table);
 
+        Console.WriteLine($"[{table.TableName}]");
         foreach (DataColumn col in table.Columns)
         {
             Console.Write("{0,-14}", col.ColumnName);
@@ -228,4 +229,3 @@ public class InMemoryDbContext
         Console.WriteLine();
     }
 }
-
