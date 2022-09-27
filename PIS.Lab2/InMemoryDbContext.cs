@@ -200,14 +200,7 @@ public class InMemoryDbContext
         DataView view = query.AsDataView();
 
         Console.WriteLine("Sort by City column:");
-        for (int i = 0; i < view.Count; i++)
-        {
-            Console.Write("{0,-14}", view[i]["ShortName"]);
-            Console.Write("{0,-14}", view[i]["LongName"]);
-            Console.Write("{0,-14}", view[i]["City"]);
-            Console.WriteLine();
-        }
-        Console.WriteLine();
+        ShowDataView(view);
     }
 
     public void FilterByDataView()
@@ -220,6 +213,11 @@ public class InMemoryDbContext
         DataView view = query.AsDataView();
 
         Console.WriteLine("Filter by City column:");
+        ShowDataView(view);
+    }
+
+    private void ShowDataView(DataView view)
+    {
         for (int i = 0; i < view.Count; i++)
         {
             Console.Write("{0,-14}", view[i]["ShortName"]);
