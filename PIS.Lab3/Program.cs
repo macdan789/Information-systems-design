@@ -1,34 +1,39 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Microsoft.Extensions.Configuration;
-using System.Data.Common;
-using System.Data.SqlClient;
+﻿using Microsoft.Extensions.Configuration;
+using PIS.Lab3;
 
 var configuration = new ConfigurationBuilder()
      .SetBasePath(Directory.GetCurrentDirectory())
      .AddJsonFile("appsettings.json")
      .Build();
 
-using var connection = new SqlConnection(
-    connectionString: configuration.GetConnectionString("SqlServerConnectionString"));
+using var dbContext = new DbContext(configuration);
 
-connection.Open();
+ShowDatabaseTables();
 
-Select(connection);
+var firstRowDescriptionValue = dbContext.Select(Table.Job, "Description");
 
-connection.Close();
+dbContext.Update(Table.Worker, "SET Name = 'New Name' WHERE WorkerID = 2");
+dbContext.Update(Table.Job, "SET Description = 'New Description' WHERE JobID = 2");
 
+//dbContext.Insert(Table.Job, new List<Job> { new() { Description = "New Added Job" } });
 
+//dbContext.Delete(Table.Job, "WHERE Description = 'New Added Job'");
 
-void Select(SqlConnection connection)
+void ShowDatabaseTables()
 {
-    var command = connection.CreateCommand();
-    command.CommandType = System.Data.CommandType.Text;
-    command.CommandText = "SELECT * FROM dbo.Worker;";
-
-    using DbDataReader reader = command.ExecuteReader();
-
-    while (reader.Read())
-    {
-        Console.WriteLine($"{reader["WorkerID"]}\t\t{reader["Name"]}\t\t{reader["ROOName"]}");
-    }
+    dbContext.SelectWorkers()
+        .ForEach(item => Console.WriteLine(item.ToString()));
+    Console.WriteLine();
+    
+    dbContext.SelectJobs()
+        .ForEach(item => Console.WriteLine(item.ToString()));
+    Console.WriteLine();
+    
+    dbContext.SelectWorkerJobs()
+        .ForEach(item => Console.WriteLine(item.ToString()));
+    Console.WriteLine();
+    
+    dbContext.SelectResidentialOperatingOffices()
+        .ForEach(item => Console.WriteLine(item.ToString()));
+    Console.WriteLine();
 }
