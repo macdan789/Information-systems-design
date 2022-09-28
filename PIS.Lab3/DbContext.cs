@@ -16,14 +16,12 @@ public enum Table
 
 public class DbContext : IDisposable
 {
-    private readonly IConfiguration _configuration;
     private readonly DbConnection _connection;
     private const string ConnectionString = "SqlServerConnectionString";
 
     public DbContext(IConfiguration configuration)
     {
-        _configuration = configuration;
-        _connection = new SqlConnection(connectionString: _configuration.GetConnectionString(ConnectionString));
+        _connection = new SqlConnection(connectionString: configuration.GetConnectionString(ConnectionString));
         _connection.Open();
     }
 
@@ -154,7 +152,7 @@ public class DbContext : IDisposable
         {
             case Worker:
             {
-                var dataList = (objects as List<Worker>).Select(item => $"('{item.Name}', '{item.RooName}')").ToList();
+                var dataList = (objects as List<Worker>)!.Select(item => $"('{item.Name}', '{item.RooName}')").ToList();
 
                 fields = "Name, ROOName";
                 values = string.Join(',', dataList);
@@ -162,7 +160,7 @@ public class DbContext : IDisposable
             }
             case Job:
             {
-                var dataList = (objects as List<Job>).Select(item => $"('{item.Description}')").ToList();
+                var dataList = (objects as List<Job>)!.Select(item => $"('{item.Description}')").ToList();
 
                 fields = "Description";
                 values = string.Join(',', dataList);
@@ -170,7 +168,7 @@ public class DbContext : IDisposable
             }
             case WorkerJob:
             {
-                var dataList = (objects as List<WorkerJob>).Select(item => $"({item.WorkerId}, {item.JobId})").ToList();
+                var dataList = (objects as List<WorkerJob>)!.Select(item => $"({item.WorkerId}, {item.JobId})").ToList();
 
                 fields = "WorkerID, JobID";
                 values = string.Join(',', dataList);
@@ -178,7 +176,7 @@ public class DbContext : IDisposable
             }
             case ResidentialOperatingOffice:
             {
-                var dataList = (objects as List<ResidentialOperatingOffice>).Select(item => $"('{item.ShortName}', '{item.LongName}', '{item.City}')").ToList();
+                var dataList = (objects as List<ResidentialOperatingOffice>)!.Select(item => $"('{item.ShortName}', '{item.LongName}', '{item.City}')").ToList();
 
                 fields = "ShortName, LongName, City";
                 values = string.Join(',', dataList);
@@ -188,9 +186,7 @@ public class DbContext : IDisposable
 
         command.CommandText = $"INSERT INTO dbo.{table}({fields}) VALUES {values};";
 
-        int affectedRows = command.ExecuteNonQuery();
-
-        return affectedRows;
+        return command.ExecuteNonQuery();
     }
 
     public object Select(Table table, string columnName)
