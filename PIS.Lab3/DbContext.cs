@@ -16,7 +16,7 @@ public enum Table
 
 public class DbContext : IDisposable
 {
-    private readonly DbConnection _connection;
+    private readonly SqlConnection _connection;
     private const string ConnectionString = "SqlServerConnectionString";
 
     public DbContext(IConfiguration configuration)
@@ -29,13 +29,11 @@ public class DbContext : IDisposable
 
     public List<Worker> SelectWorkers()
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"SELECT * FROM dbo.{Table.Worker};";
+        var command = CreateCommand($"SELECT * FROM dbo.{Table.Worker};");
 
         using DbDataReader reader = command.ExecuteReader();
 
-        List<Worker> workers = new List<Worker>();
+        List<Worker> workers = new();
         while (reader.Read())
         {
             workers.Add(new Worker
@@ -51,13 +49,11 @@ public class DbContext : IDisposable
 
     public List<Job> SelectJobs()
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"SELECT * FROM dbo.{Table.Job};";
+        var command = CreateCommand($"SELECT * FROM dbo.{Table.Job};");
 
         using DbDataReader reader = command.ExecuteReader();
 
-        List<Job> jobs = new List<Job>();
+        List<Job> jobs = new();
         while (reader.Read())
         {
             jobs.Add(new Job
@@ -72,13 +68,11 @@ public class DbContext : IDisposable
 
     public List<WorkerJob> SelectWorkerJobs()
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"SELECT * FROM dbo.{Table.WorkerJob};";
+        var command = CreateCommand($"SELECT * FROM dbo.{Table.WorkerJob};");
 
         using DbDataReader reader = command.ExecuteReader();
 
-        List<WorkerJob> workerJobs = new List<WorkerJob>();
+        List<WorkerJob> workerJobs = new();
         while (reader.Read())
         {
             workerJobs.Add(new WorkerJob
@@ -94,9 +88,7 @@ public class DbContext : IDisposable
 
     public List<ResidentialOperatingOffice> SelectResidentialOperatingOffices()
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"SELECT * FROM dbo.{Table.ResidentialOperatingOffice};";
+        var command = CreateCommand($"SELECT * FROM dbo.{Table.ResidentialOperatingOffice};");
 
         using DbDataReader reader = command.ExecuteReader();
 
@@ -118,30 +110,21 @@ public class DbContext : IDisposable
 
     public int Update(Table table, string query)
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"UPDATE dbo.{table} {query};";
+        var command = CreateCommand($"UPDATE dbo.{table} {query};");
 
         return command.ExecuteNonQuery();
     }
 
     public int Delete(Table table, string query)
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"DELETE FROM dbo.{table} {query};";
+        var command = CreateCommand($"DELETE FROM dbo.{table} {query};");
 
-        int affectedRows = command.ExecuteNonQuery();
-
-        return affectedRows;
+        return command.ExecuteNonQuery();
     }
 
     public int Insert<T>(Table table, List<T> objects) where T : IEntity
     {
         ArgumentNullException.ThrowIfNull(objects);
-
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
 
         (string fields, string values) = (string.Empty, string.Empty);
 
@@ -182,18 +165,26 @@ public class DbContext : IDisposable
             }
         }
 
-        command.CommandText = $"INSERT INTO dbo.{table}({fields}) VALUES {values};";
+        var command = CreateCommand($"INSERT INTO dbo.{table}({fields}) VALUES {values};");
 
         return command.ExecuteNonQuery();
     }
 
     public object Select(Table table, string columnName)
     {
-        var command = _connection.CreateCommand();
-        command.CommandType = CommandType.Text;
-        command.CommandText = $"SELECT TOP 1 {columnName} FROM dbo.{table};";
-
+        var command = CreateCommand($"SELECT TOP 1 {columnName} FROM dbo.{table};");
+        
         return command.ExecuteScalar();
+    }
+
+    private DbCommand CreateCommand(string query)
+    {
+        return new SqlCommand
+        {
+            Connection = _connection,
+            CommandType = CommandType.Text,
+            CommandText = query
+        };
     }
 
     public void Dispose()
