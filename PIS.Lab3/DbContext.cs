@@ -122,9 +122,7 @@ public class DbContext : IDisposable
         command.CommandType = CommandType.Text;
         command.CommandText = $"UPDATE dbo.{table} {query};";
 
-        int affectedRows = command.ExecuteNonQuery();
-
-        return affectedRows;
+        return command.ExecuteNonQuery();
     }
 
     public int Delete(Table table, string query)
