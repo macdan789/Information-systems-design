@@ -12,35 +12,38 @@ public class InMemoryDbContext
     public DataTable ResidentialOperatingOffice { get; set; }
 
     /// <summary>
-    /// Ctor does all basic initialization: creates tables, inserts test data, creates data set and set up some relations of tables
+    /// Ctor does all basic initialization:
+    ///     creates DataTables, inserts initial data, creates DataSet and set up some relations of tables
     /// </summary>
     public InMemoryDbContext()
     {
-        Job = CreateTableJob();
-        Worker = CreateTableWorker();
-        WorkerJob = CreateTableWorkerJob();
-        ResidentialOperatingOffice = CreateTableResidentialOperatingOffice();
+        Job = CreateJob();
+        Worker = CreateWorker();
+        WorkerJob = CreateWorkerJob();
+        ResidentialOperatingOffice = CreateResidentialOperatingOffice();
 
-        DataSet = new DataSet();
-        DataSet.Tables.AddRange(new DataTable[] { Job, Worker, WorkerJob, ResidentialOperatingOffice });
+        DataSet = new DataSet()
+        {
+            Tables = { Job, Worker, WorkerJob, ResidentialOperatingOffice }
+        };
 
-        DataSet.Relations.Add("ROO_Worker", ResidentialOperatingOffice.Columns["ShortName"], Worker.Columns["ROOName"], true);
-        DataSet.Relations.Add("Worker_WorkerJob", Worker.Columns["WorkerID"], WorkerJob.Columns["WorkerID"], true);
-        DataSet.Relations.Add("Job_WorkerJob", Job.Columns["JobID"], WorkerJob.Columns["JobID"], true);
+        DataSet.Relations.Add("ROO_Worker", ResidentialOperatingOffice.Columns["ShortName"]!, Worker.Columns["ROOName"]!, true);
+        DataSet.Relations.Add("Worker_WorkerJob", Worker.Columns["WorkerID"]!, WorkerJob.Columns["WorkerID"]!, true);
+        DataSet.Relations.Add("Job_WorkerJob", Job.Columns["JobID"]!, WorkerJob.Columns["JobID"]!, true);
 
         InsertTestData();
     }
 
     #region Private Methods
 
-    private DataTable CreateTableJob()
+    private DataTable CreateJob()
     {
         DataTable orderDetailTable = new("Job");
 
         DataColumn[] columns =
         {
-            new DataColumn("JobID", typeof(int)),
-            new DataColumn("Description", typeof(string))
+            new("JobID", typeof(int)),
+            new("Description", typeof(string))
         };
 
         columns[0].AutoIncrement = true;
@@ -48,19 +51,19 @@ public class InMemoryDbContext
         columns[0].AutoIncrementStep = 1;
 
         orderDetailTable.Columns.AddRange(columns);
-        orderDetailTable.PrimaryKey = new DataColumn[] { orderDetailTable.Columns["JobID"] };
+        orderDetailTable.PrimaryKey = new[] { orderDetailTable.Columns["JobID"] };
         return orderDetailTable;
     }
 
-    private DataTable CreateTableWorker()
+    private DataTable CreateWorker()
     {
         DataTable orderDetailTable = new("Worker");
 
         DataColumn[] columns =
         {
-            new DataColumn("WorkerID", typeof(int)),
-            new DataColumn("Name", typeof(string)),
-            new DataColumn("ROOName", typeof(string)),
+            new("WorkerID", typeof(int)),
+            new("Name", typeof(string)),
+            new("ROOName", typeof(string)),
         };
 
         columns[0].AutoIncrement = true;
@@ -68,19 +71,19 @@ public class InMemoryDbContext
         columns[0].AutoIncrementStep = 1;
 
         orderDetailTable.Columns.AddRange(columns);
-        orderDetailTable.PrimaryKey = new DataColumn[] { orderDetailTable.Columns["WorkerID"] };
+        orderDetailTable.PrimaryKey = new[] { orderDetailTable.Columns["WorkerID"] };
         return orderDetailTable;
     }
 
-    private DataTable CreateTableWorkerJob()
+    private DataTable CreateWorkerJob()
     {
         DataTable orderDetailTable = new("WorkerJob");
 
         DataColumn[] columns =
         {
-            new DataColumn("ID", typeof(int)),
-            new DataColumn("WorkerID", typeof(int)),
-            new DataColumn("JobID", typeof(int))
+            new("ID", typeof(int)),
+            new("WorkerID", typeof(int)),
+            new("JobID", typeof(int))
         };
 
         columns[0].AutoIncrement = true;
@@ -88,23 +91,23 @@ public class InMemoryDbContext
         columns[0].AutoIncrementStep = 1;
 
         orderDetailTable.Columns.AddRange(columns);
-        orderDetailTable.PrimaryKey = new DataColumn[] { orderDetailTable.Columns["WorkerID"], orderDetailTable.Columns["JobID"] };
+        orderDetailTable.PrimaryKey = new[] { orderDetailTable.Columns["WorkerID"], orderDetailTable.Columns["JobID"] };
         return orderDetailTable;
     }
 
-    private DataTable CreateTableResidentialOperatingOffice()
+    private DataTable CreateResidentialOperatingOffice()
     {
         DataTable orderDetailTable = new("ResidentialOperatingOffice");
 
         DataColumn[] columns =
         {
-            new DataColumn("ShortName", typeof(string)),
-            new DataColumn("LongName", typeof(string)),
-            new DataColumn("City", typeof(string))
+            new("ShortName", typeof(string)),
+            new("LongName", typeof(string)),
+            new("City", typeof(string))
         };
 
         orderDetailTable.Columns.AddRange(columns);
-        orderDetailTable.PrimaryKey = new DataColumn[] { orderDetailTable.Columns["ShortName"] };
+        orderDetailTable.PrimaryKey = new[] { orderDetailTable.Columns["ShortName"] };
         return orderDetailTable;
     }
 
@@ -112,33 +115,33 @@ public class InMemoryDbContext
     {
         object[] rooRows =
         {
-            new object[] { "JEK 1", "Desc of JEK 1", "Lviv" },
-            new object[] { "JEK 2", "Desc of JEK 2", "Lviv" },
-            new object[] { "JEK 3", "Desc of JEK 3", "Kyiv" },
-            new object[] { "JEK 4", "Desc of JEK 4", "Kyiv" },
-            new object[] { "JEK 5", "Desc of JEK 5", "Vinnytsia" }
+            new object[] { "TEST 1", "Desc of TEST 1", "City1" },
+            new object[] { "TEST 2", "Desc of TEST 2", "City1" },
+            new object[] { "TEST 3", "Desc of TEST 3", "City2" },
+            new object[] { "TEST 4", "Desc of TEST 4", "City2" },
+            new object[] { "TEST 5", "Desc of TEST 5", "City3" }
         };
         foreach(object[] row in rooRows)
             ResidentialOperatingOffice.Rows.Add(row);
 
         object[] workerRows =
         {
-            new object[] { null, "Worker 1", "JEK 1" },
-            new object[] { null, "Worker 2", "JEK 1" },
-            new object[] { null, "Worker 3", "JEK 2" },
-            new object[] { null, "Worker 4", "JEK 2" },
-            new object[] { null, "Worker 5", "JEK 5" }
+            new object[] { null, "Worker 1", "TEST 1" },
+            new object[] { null, "Worker 2", "TEST 1" },
+            new object[] { null, "Worker 3", "TEST 2" },
+            new object[] { null, "Worker 4", "TEST 2" },
+            new object[] { null, "Worker 5", "TEST 5" }
         };
         foreach (object[] row in workerRows)
             Worker.Rows.Add(row);
 
         object[] jobRows =
         {
-            new object[] { null, "Job 1" },
-            new object[] { null, "Job 2" },
-            new object[] { null, "Job 3" },
-            new object[] { null, "Job 4" },
-            new object[] { null, "Job 5" }
+            new object[] { null, "Job Desc 1" },
+            new object[] { null, "Job Desc 2" },
+            new object[] { null, "Job Desc 3" },
+            new object[] { null, "Job Desc 4" },
+            new object[] { null, "Job Desc 5" }
         };
         foreach (object[] row in jobRows)
             Job.Rows.Add(row);
@@ -149,23 +152,15 @@ public class InMemoryDbContext
             new object[] { null, 1, 2 },
             new object[] { null, 1, 3 },
             new object[] { null, 3, 4 },
-            new object[] { null, 3, 5 }
+            new object[] { null, 3, 5 },
+            new object[] { null, 4, 4 },
+            new object[] { null, 4, 5 },
+            new object[] { null, 5, 1 },
+            new object[] { null, 5, 2 },
+            new object[] { null, 5, 3 }
         };
         foreach (object[] row in workerJobRows)
             WorkerJob.Rows.Add(row);
-    }
-
-    private void ShowDataView(DataView view)
-    {
-        StringBuilder builder = new();
-        for (int i = 0; i < view.Count; i++)
-        {
-            builder.AppendFormat("{0,-14}", view[i]["ShortName"]);
-            builder.AppendFormat("{0,-14}", view[i]["LongName"]);
-            builder.AppendFormat("{0,-14}", view[i]["City"]);
-            builder.Append('\n');
-        }
-        Console.WriteLine(builder.ToString());
     }
 
     #endregion
@@ -201,35 +196,52 @@ public class InMemoryDbContext
 
     public void ShowAllTables()
     {
-        foreach(var table in new DataTable[] { Job, Worker, WorkerJob, ResidentialOperatingOffice })
+        foreach(var table in new[] { Job, Worker, WorkerJob, ResidentialOperatingOffice })
         {
             ShowTable(table);
         }
     }
 
-    public void SortByDataView()
+    #region DataView using LINQ Query (also there is DataView fields: RowFilter, RowStateFilter, Sort to query data)
+
+    public void SortByDataView<T>(DataTable table, string column)
     {
         EnumerableRowCollection<DataRow> query =
-                from obj in ResidentialOperatingOffice.AsEnumerable()
-                orderby obj.Field<string>("City")
+                from obj in table.AsEnumerable()
+                orderby obj.Field<T>(column)
                 select obj;
 
         DataView view = query.AsDataView();
 
-        Console.WriteLine("Sort by City column:");
+        Console.WriteLine($"Sort by {column}:");
         ShowDataView(view);
     }
 
-    public void FilterByDataView()
+    public void FilterByDataView<T>(DataTable table, string column, T value)
     {
         EnumerableRowCollection<DataRow> query =
-                from obj in ResidentialOperatingOffice.AsEnumerable()
-                where obj.Field<string>("City") == "Lviv"
+                from obj in table.AsEnumerable()
+                where obj.Field<T>(column)!.Equals(value)
                 select obj;
 
         DataView view = query.AsDataView();
 
-        Console.WriteLine("Filter by City column:");
+        Console.WriteLine($"Filter by {column}:");
         ShowDataView(view);
     }
+
+    private void ShowDataView(DataView view)
+    {
+        StringBuilder builder = new();
+        for (int i = 0; i < view.Count; i++)
+        {
+            builder.AppendFormat("{0,-14}", view[i]["ShortName"]);
+            builder.AppendFormat("{0,-14}", view[i]["LongName"]);
+            builder.AppendFormat("{0,-14}", view[i]["City"]);
+            builder.Append('\n');
+        }
+        Console.WriteLine(builder.ToString());
+    }
+
+    #endregion
 }

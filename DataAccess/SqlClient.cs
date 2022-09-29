@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataAccess
 {
-    public class SqlClient
+    public class SqlClient : IDisposable
     {
         private readonly pis_lab1Entities _dbContext;
 
@@ -19,15 +20,12 @@ namespace DataAccess
 
         public void SelectExample()
         {
-            var allROO = _dbContext.ResidentialOperatingOffice.ToList();
+            var allRoo = _dbContext.ResidentialOperatingOffice.ToList();
             var allWorkers = _dbContext.Worker.ToList();
-            var allJobs = _dbContext.Job.ToList();
 
-            var firstROO = allROO.First();
+            var workersByRoo = allWorkers.Where(x => x.ROOName == allRoo.First().ShortName).ToList();
 
-            var workersByROO = allWorkers.Where(x => x.ROOName == firstROO.ShortName).ToList();
-
-            workersByROO.ForEach(worker =>
+            workersByRoo.ForEach(worker =>
             {
                 var workerJobs = worker.WorkerJob
                                        .ToList()
@@ -39,52 +37,64 @@ namespace DataAccess
 
         public void InsertExample()
         {
-            var newROO = new ResidentialOperatingOffice
+            var newRoo = new ResidentialOperatingOffice
             {
-                City = "Rivne",
-                ShortName = "ZHEK-#111",
-                LongName = "Long name for ZHEK-#111"
+                City      = "TEST",
+                ShortName = "TEST",
+                LongName  = "TEST"
             };
 
             var newWorker = new Worker
             {
-                ResidentialOperatingOffice = newROO,
-                Name = "Bohdan Marko",
-                ROOName = "ZHEK-#111"
+                ResidentialOperatingOffice = newRoo,
+                Name                       = "TEST",
+                ROOName = newRoo.ShortName
             };
 
-            _dbContext.ResidentialOperatingOffice.Add(newROO);
+            _dbContext.ResidentialOperatingOffice.Add(newRoo);
             _dbContext.Worker.Add(newWorker);
             _dbContext.SaveChanges();
 
-            var allROO = _dbContext.ResidentialOperatingOffice.ToList();
-            var allWorkers = _dbContext.Worker.ToList();
+            List<ResidentialOperatingOffice> allRoo = _dbContext.ResidentialOperatingOffice.ToList();
+            List<Worker> allWorkers = _dbContext.Worker.ToList();
 
-            Console.WriteLine($"ROOs: {allROO.Count}, workers: {allWorkers.Count}");
+            Console.WriteLine($"Roos: {allRoo.Count}, Workers: {allWorkers.Count}");
         }
 
         public void UpdateExample()
         {
-            var rooNameToUpdate = "ZHEK-#111";
+            var rooNameToUpdate = "TEST";
 
-            var rooToUpdate = _dbContext.ResidentialOperatingOffice.Where(x => x.ShortName == rooNameToUpdate).ToList().Single();
-            rooToUpdate.LongName = "Updated name for ZHEK #111";
-            rooToUpdate.Worker.First().Name = "Roman Ivanstiv";
+            var rooToUpdate = _dbContext.ResidentialOperatingOffice
+                .Where(x => x.ShortName == rooNameToUpdate)
+                .ToList()
+                .Single();
+            
+            rooToUpdate.LongName = "NEW TEST VALUE";
+            rooToUpdate.Worker?.ToList().ForEach(worker => worker.Name = "NEW TEST VALUE");
 
             _dbContext.SaveChanges();
         }
 
         public void DeleteExample()
         {
-            var rooNameToDelete = "ZHEK-#111";
+            var rooNameToDelete = "TEST";
 
-            var rooToDelete = _dbContext.ResidentialOperatingOffice.Where(x => x.ShortName == rooNameToDelete).ToList().Single();
+            var rooToDelete = _dbContext.ResidentialOperatingOffice
+                .Where(x => x.ShortName == rooNameToDelete)
+                .ToList()
+                .Single();
 
-            _dbContext.Worker.Remove(rooToDelete.Worker.First());
+            rooToDelete.Worker.ToList()
+                .ForEach(worker => _dbContext.Worker.Remove(worker));
             _dbContext.ResidentialOperatingOffice.Remove(rooToDelete);
 
             _dbContext.SaveChanges();
         }
 
+        public void Dispose()
+        {
+            _dbContext.Dispose();
+        }
     }
 }

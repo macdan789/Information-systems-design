@@ -170,11 +170,32 @@ public class DbContext : IDisposable
         return command.ExecuteNonQuery();
     }
 
-    public object Select(Table table, string columnName)
+    public object Select(Table table, string columnName, Dictionary<string, string> filterQuery = null)
     {
-        var command = CreateCommand($"SELECT TOP 1 {columnName} FROM dbo.{table};");
+        var query = $"SELECT TOP 1 {columnName} FROM dbo.{table}";
+        
+        if (filterQuery is not null)
+        {
+            var filterList = filterQuery.Select(item => $"{item.Key} = '{item.Value}'").ToList();
+            var filter = string.Join(" AND ", filterList);
+            query += $" WHERE {filter}";
+        }
+
+        var command = CreateCommand(query);
         
         return command.ExecuteScalar();
+    }
+
+    public int GetTableRowsCount(Table table)
+    {
+        return table switch
+        {
+            Table.Worker => CreateCommand($"SELECT COUNT(*) FROM dbo.{Table.Worker};").ExecuteScalar() as int? ?? 0,
+            Table.Job => CreateCommand($"SELECT COUNT(*) FROM dbo.{Table.Job};").ExecuteScalar() as int? ?? 0,
+            Table.WorkerJob => CreateCommand($"SELECT COUNT(*) FROM dbo.{Table.WorkerJob};").ExecuteScalar() as int? ?? 0,
+            Table.ResidentialOperatingOffice => CreateCommand($"SELECT COUNT(*) FROM dbo.{Table.ResidentialOperatingOffice};").ExecuteScalar() as int? ?? 0,
+            _ => throw new ArgumentOutOfRangeException(nameof(table), table, null)
+        };
     }
 
     private DbCommand CreateCommand(string query)
