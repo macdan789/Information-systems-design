@@ -139,14 +139,14 @@ void ChangeDataSetWorkerTable()
     var workerTable = dataset.Tables[Table.Worker.ToString()];
 
     //Delete row
-    var rowToDelete = workerTable.Select("Name = 'NEW Worker via DataSet'").FirstOrDefault();
+    var rowToDelete = workerTable.Select("Name = 'New Added Worker 4'").FirstOrDefault();
     rowToDelete.Delete();
 
     //Add row
     workerTable.Rows.Add(new Random().Next(20, 100), "NEW Worker via DataSet", "LKPZ");
 
     //Update row
-    var rowToUpdate = workerTable.Select("Name = 'Bohdan Marko'").FirstOrDefault();
+    var rowToUpdate = workerTable.Select("Name = 'New Added Worker 4'").FirstOrDefault();
     rowToUpdate!["Name"] = "New Worker Name via DataSet";
     rowToUpdate!["ROOName"] = "LKPZ"; //already existing one in ResidentialOperatingOffice table
 }
