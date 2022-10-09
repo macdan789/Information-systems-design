@@ -28,8 +28,8 @@ dbContext.Insert(Table.ResidentialOperatingOffice, new List<ResidentialOperating
 
 dbContext.Insert(Table.Worker, new List<Worker>
 {
-    new Worker { Name = "New Added Worker 3", RooName = "New ROO object" },
-    new Worker { Name = "New Added Worker 4", RooName = "New ROO object" }
+    new Worker { Name = "New Added Worker 1", RooName = "New ROO object" },
+    new Worker { Name = "New Added Worker 2", RooName = "New ROO object" }
 });
 
 dbContext.Update(Table.Worker, query: "SET Name = 'Updated Name for Added Worker' WHERE ROOName = 'New ROO object'");
@@ -38,6 +38,7 @@ dbContext.Delete(Table.WorkerJob, query: "WHERE WorkerID IN ('3')");
 
 dbContext.Delete(Table.Worker, query: "WHERE WorkerID IN ('3')");
 
+Console.WriteLine($"After manipulation with table {Table.Worker}:");
 ShowDatabaseTables();
 
 #endregion
@@ -63,25 +64,30 @@ ShowDatabaseTables();
 
 void ShowDatabaseTables()
 {
+    Console.WriteLine($"Table: {Table.Worker}");
     dbContext.SelectWorkers()
         .ForEach(item => Console.WriteLine(item.ToString()));
-    Console.WriteLine();
-    
+    Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
+
+    Console.WriteLine($"Table: {Table.Job}");
     dbContext.SelectJobs()
         .ForEach(item => Console.WriteLine(item.ToString()));
-    Console.WriteLine();
-    
+    Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
+
+    Console.WriteLine($"Table: {Table.WorkerJob}");
     dbContext.SelectWorkerJobs()
         .ForEach(item => Console.WriteLine(item.ToString()));
-    Console.WriteLine();
-    
+    Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
+
+    Console.WriteLine($"Table: {Table.ResidentialOperatingOffice}");
     dbContext.SelectResidentialOperatingOffices()
         .ForEach(item => Console.WriteLine(item.ToString()));
-    Console.WriteLine();
+    Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
 }
 
 void ShowDataSetTables()
 {
+    Console.WriteLine("Print tables from DataSet object:");
     foreach (DataTable table in dataset.Tables)
     {
         ShowTable(table);
@@ -139,14 +145,13 @@ void ChangeDataSetWorkerTable()
     var workerTable = dataset.Tables[Table.Worker.ToString()];
 
     //Delete row
-    var rowToDelete = workerTable.Select("Name = 'New Added Worker 4'").FirstOrDefault();
-    rowToDelete.Delete();
+    var rowsToDelete = workerTable.Select("Name = 'Updated Name for Added Worker'").ToList();
+    rowsToDelete.ForEach(row => row.Delete());
 
     //Add row
-    workerTable.Rows.Add(new Random().Next(20, 100), "NEW Worker via DataSet", "LKPZ");
+    workerTable.Rows.Add(new Random().Next(20, 100), "New Added Worker via DataSet", "LKPZ");
 
     //Update row
-    var rowToUpdate = workerTable.Select("Name = 'New Added Worker 4'").FirstOrDefault();
-    rowToUpdate!["Name"] = "New Worker Name via DataSet";
-    rowToUpdate!["ROOName"] = "LKPZ"; //already existing one in ResidentialOperatingOffice table
+    var rowToUpdate = workerTable.Select("Name = 'New Added Worker via DataSet'").FirstOrDefault();
+    rowToUpdate!["Name"] = "Updated Worker Name via DataSet";
 }
