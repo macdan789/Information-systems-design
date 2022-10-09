@@ -27,6 +27,8 @@ public class DbContext : IDisposable
 
     #region SELECT
 
+    public SqlCommand SelectCommand(Table table) => (SqlCommand)CreateCommand($"SELECT * FROM dbo.{table};");
+
     public List<Worker> SelectWorkers()
     {
         var command = CreateCommand($"SELECT * FROM dbo.{Table.Worker};");
@@ -129,7 +131,7 @@ public class DbContext : IDisposable
         (string fields, string values) = (string.Empty, string.Empty);
 
         //Find out the type of objects
-        switch (objects.Single())
+        switch (objects.First())
         {
             case Worker:
             {
