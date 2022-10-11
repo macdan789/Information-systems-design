@@ -9,6 +9,7 @@ namespace PIS.Lab4.Models
     {
         public int WorkerID { get; set; }
         public string Name { get; set; }
+        public string EmailAddress { get; set; }
         public bool IsAdmin { get; set; }
         public int WorkplaceID { get; set; }
         public Workplace Workplace { get; set; }

@@ -17,32 +17,34 @@ namespace PIS.Lab4
             var workplace = await context.GetWorkplace(1);
             Console.WriteLine($"[{workplace.WorkplaceID}]\t{workplace.ShortName}\t{workplace.LongName}\t{workplace.City}");
 
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
+
             //select all entities from DB
             var workplaces = await context.GetWorkplaces();
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
             foreach (var entity in workplaces)
             {
                 Console.WriteLine($"[{entity.WorkplaceID}]\t{entity.ShortName}\t{entity.LongName}\t{entity.City}");
             }
             
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
             Console.WriteLine("Validation examples using FluentValidation:\n");
 
-            ValidationExamples(context);
+            await ValidationExamples(context);
 
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)));
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
             Console.WriteLine("Audit example of Worker entity:\n");
 
             context.AuditWorker(workerId: 1);
         }
 
-        public static async void ValidationExamples(IDbManager context)
+        public static async Task ValidationExamples(IDbManager context)
         {
             var workplace = await context.GetWorkplace(1);
 
             var validWorker = new Worker
             {
                 Name = "Peter",
+                EmailAddress = "peter@gmail.com",
                 IsAdmin = false,
                 WorkplaceID = workplace.WorkplaceID,
                 Workplace = workplace
@@ -51,7 +53,7 @@ namespace PIS.Lab4
             if (validWorker.Validate())
             {
                 var affectedRows = await context.InsertWorker(validWorker);
-                Console.WriteLine(affectedRows);
+                Console.WriteLine($"Inserted rows = {affectedRows}");
             }
 
             var invalidJob = new Job
@@ -63,7 +65,7 @@ namespace PIS.Lab4
             if (invalidJob.Validate())
             {
                 var affectedRows = await context.InsertJob(invalidJob);
-                Console.WriteLine(affectedRows);
+                Console.WriteLine($"Inserted rows = {affectedRows}");
             }
 
             var updateWorkplace = new Workplace
@@ -77,7 +79,7 @@ namespace PIS.Lab4
             if (updateWorkplace.Validate())
             {
                 var affectedRows = await context.UpdateWorkplace(updateWorkplace);
-                Console.WriteLine(affectedRows);
+                Console.WriteLine($"Updated rows = {affectedRows}");
             }
         }
 

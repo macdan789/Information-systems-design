@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
 using PIS.Lab4.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Validation;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PIS.Lab4.DataAccess
