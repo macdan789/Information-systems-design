@@ -22,5 +22,6 @@ namespace PIS.Lab4.DataAccess
         Task<int> UpdateJob(Job job);
         Task<int> UpdateWorker(Worker worker);
         Task<int> UpdateWorkplace(Workplace workplace);
+        public void AuditWorker(int workerId);
     }
 }
