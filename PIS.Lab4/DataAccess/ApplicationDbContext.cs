@@ -42,110 +42,78 @@ namespace PIS.Lab4.DataAccess
 
         #endregion
 
-        #region insert
-
-        public async Task<int> InsertWorkplace(Workplace workplace)
+        public async Task<int> InsertEntity<T>(T entity) where T : class, new()
         {
-            await _dbContext.Workplace.AddAsync(workplace);
+            var type = new T();
+            
+            if (type is Worker)
+            {
+                var worker = entity as Worker;
+                await _dbContext.Worker.AddAsync(worker);
+            }
+            else if (type is Job)
+            {
+                var job = entity as Job;
+                await _dbContext.Job.AddAsync(job);
+            }
+            else if (type is Workplace)
+            {
+                var workplace = entity as Workplace;
+                await _dbContext.Workplace.AddAsync(workplace);
+            }
+
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> InsertWorker(Worker worker)
+        public async Task<int> DeleteEntity<T>(int entityId) where T : class, new()
         {
-            await _dbContext.Worker.AddAsync(worker);
+            var type = new T();
+
+            if (type is Worker)
+            {
+                var entity = await GetWorker(id);
+                _dbContext.Worker.Remove(entity);
+            }
+            if (type is Job)
+            {
+                var entity = await GetJob(id);
+                _dbContext.Job.Remove(entity);
+            }
+            if (type is Workplace)
+            {
+                var entity = await GetWorkplace(id);
+                _dbContext.Workplace.Remove(entity);
+            }
+
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<int> InsertJob(Job job)
+        public async Task<int> UpdateEntity<T>(T entity, int entityId) where T : class
         {
-            await _dbContext.Job.AddAsync(job);
-            return await _dbContext.SaveChangesAsync();
-        }
+            var dbSet = _dbContext.Set<T>();
 
-        #endregion
-
-        #region delete
-
-        public async Task<int> DeleteWorker(int id)
-        {
-            var worker = await GetWorker(id);
-
-            if (worker != null)
+            if (entity is Worker)
             {
-                _dbContext.Worker.Remove(worker);
-                return await _dbContext.SaveChangesAsync();
+                dbSet = _dbContext.Worker as DbSet<T>;
             }
-
-            return 0;
-        }
-
-        public async Task<int> DeleteJob(int id)
-        {
-            var job = await GetJob(id);
-
-            if (job != null)
+            if (entity is Job)
             {
-                _dbContext.Job.Remove(job);
-                return await _dbContext.SaveChangesAsync();
+                dbSet = _dbContext.Job as DbSet<T>;
             }
-
-            return 0;
-        }
-
-        public async Task<int> DeleteWorkplace(int id)
-        {
-            var workplace = await GetWorkplace(id);
-
-            if (workplace != null)
+            if (entity is Workplace)
             {
-                _dbContext.Workplace.Remove(workplace);
-                return await _dbContext.SaveChangesAsync();
+                dbSet = _dbContext.Workplace as DbSet<T>;
             }
-
-            return 0;
-        }
-
-        #endregion
-
-        #region update
-
-        public async Task<int> UpdateWorker(Worker worker)
-        {
-            if (await _dbContext.Worker.FindAsync(worker.WorkerID) is Worker found)
+            
+            if (await dbSet.FindAsync(entityId) is T found)
             {
                 _dbContext.Entry(found).State = EntityState.Detached;
-                _dbContext.Worker.Update(worker);
+                dbSet.Update(entity);
                 return await _dbContext.SaveChangesAsync();
             }
 
             return 0;
         }
-
-        public async Task<int> UpdateJob(Job job)
-        {
-            if (await _dbContext.Job.FindAsync(job.JobID) is Job found)
-            {
-                _dbContext.Entry(found).State = EntityState.Detached;
-                _dbContext.Job.Update(job);
-                return await _dbContext.SaveChangesAsync();
-            }
-
-            return 0;
-        }
-
-        public async Task<int> UpdateWorkplace(Workplace workplace)
-        {
-            if (await _dbContext.Workplace.FindAsync(workplace.WorkplaceID) is Workplace found)
-            {
-                _dbContext.Entry(found).State = EntityState.Detached;
-                _dbContext.Workplace.Update(workplace);
-                return await _dbContext.SaveChangesAsync();
-            }
-
-            return 0;
-        }
-
-        #endregion
         
         public void Dispose() => _dbContext.Dispose();
 

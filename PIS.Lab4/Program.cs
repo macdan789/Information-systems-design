@@ -52,7 +52,7 @@ namespace PIS.Lab4
 
             if (validWorker.Validate())
             {
-                var affectedRows = await context.InsertWorker(validWorker);
+                var affectedRows = await context.InsertEntity(validWorker);
                 Console.WriteLine($"Inserted rows = {affectedRows}");
             }
 
@@ -64,7 +64,7 @@ namespace PIS.Lab4
 
             if (invalidJob.Validate())
             {
-                var affectedRows = await context.InsertJob(invalidJob);
+                var affectedRows = await context.InsertEntity(invalidJob);
                 Console.WriteLine($"Inserted rows = {affectedRows}");
             }
 
@@ -78,14 +78,14 @@ namespace PIS.Lab4
 
             if (updateWorkplace.Validate())
             {
-                var affectedRows = await context.UpdateWorkplace(updateWorkplace);
+                var affectedRows = await context.UpdateEntity(updateWorkplace, workplace.WorkplaceID);
                 Console.WriteLine($"Updated rows = {affectedRows}");
             }
         }
 
         public static async Task<int> InsertTestData(IDbManager context)
         {
-            List<Workplace> workplaces = new List<Workplace>
+            List<Workplace> workplaces = new()
             {
                 new Workplace
                 {
@@ -116,10 +116,7 @@ namespace PIS.Lab4
                 
             foreach (var workplace in workplaces)
             {
-                if(workplace.Validate())
-                {
-                    affectedRows += await context.InsertWorkplace(workplace);
-                }
+                affectedRows += workplace.Validate() ? await context.InsertEntity(workplace) : 0;
             }
 
             return affectedRows;
