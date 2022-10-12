@@ -15,24 +15,22 @@ namespace PIS.Lab4
 
             //select one entity from DB using Entity Framework Core
             var workplace = await context.GetWorkplace(1);
-            Console.WriteLine($"[{workplace.WorkplaceID}]\t{workplace.ShortName}\t{workplace.LongName}\t{workplace.City}");
+            Console.WriteLine(workplace.ToString());
 
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
+            SplitRow("Get all workplaces:");
 
             //select all entities from DB
             var workplaces = await context.GetWorkplaces();
             foreach (var entity in workplaces)
             {
-                Console.WriteLine($"[{entity.WorkplaceID}]\t{entity.ShortName}\t{entity.LongName}\t{entity.City}");
+                Console.WriteLine(entity.ToString());
             }
-            
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
-            Console.WriteLine("Validation examples using FluentValidation:\n");
+
+            SplitRow("Validation examples using FluentValidation:");
 
             await ValidationExamples(context);
 
-            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
-            Console.WriteLine("Audit example of Worker entity:\n");
+            SplitRow("Audit example of Worker entity:");
 
             context.AuditWorker(workerId: 1);
         }
@@ -58,8 +56,8 @@ namespace PIS.Lab4
 
             var invalidJob = new Job
             {
-                Description = "HGldYnFdmPzbCaHPxhkc rKWxLlcFKGuNSleIQntn PdmtcKDFibikevzusmgG",
-                Priority = 11
+                Description = "HGldYnFdmPzbCaHPxhkc rKWxLlcFKGuNSleIQntn PdmtcKDFibikevzusmgG", //more than 50 symbols
+                Priority = 11 // out of 1-10
             };
 
             if (invalidJob.Validate())
@@ -120,6 +118,12 @@ namespace PIS.Lab4
             }
 
             return affectedRows;
+        }
+
+        private static void SplitRow(string text)
+        {
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 50)) + "\n");
+            Console.WriteLine(text + "\n");
         }
     }
 }

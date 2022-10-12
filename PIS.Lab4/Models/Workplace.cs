@@ -32,5 +32,8 @@ namespace PIS.Lab4.Models
 
             return results.IsValid;
         }
+
+        public static string ToString(this Workplace workplace) 
+            => $"[{workplace.WorkplaceID}]\t{workplace.ShortName}\t{workplace.LongName}\t{workplace.City}";
     }
 }
