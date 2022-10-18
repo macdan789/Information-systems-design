@@ -1,26 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PIS.Lab4.Models;
-using System;
+using PIS.DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PIS.Lab4.DataAccess
+namespace PIS.DAL
 {
-    public class ApplicationDbContext : DbContext
-    {
-        public DbSet<Job> Job { get; set; }
-        public DbSet<Worker> Worker { get; set; }
-        public DbSet<Workplace> Workplace { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer(@"Server=.;Database=PIS_Lab4_EFCore;Trusted_Connection=True;");
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            
-        }
-    }
-
     public class DbManager : IDbManager
     {
         private readonly ApplicationDbContext _dbContext;
@@ -45,7 +29,7 @@ namespace PIS.Lab4.DataAccess
         public async Task<int> InsertEntity<T>(T entity) where T : class, new()
         {
             var type = new T();
-            
+
             if (type is Worker)
             {
                 var worker = entity as Worker;
@@ -104,7 +88,7 @@ namespace PIS.Lab4.DataAccess
             {
                 dbSet = _dbContext.Workplace as DbSet<T>;
             }
-            
+
             if (await dbSet.FindAsync(entityId) is T found)
             {
                 _dbContext.Entry(found).State = EntityState.Detached;
@@ -114,35 +98,7 @@ namespace PIS.Lab4.DataAccess
 
             return 0;
         }
-        
+
         public void Dispose() => _dbContext.Dispose();
-
-        public void AuditWorker(int workerId)
-        {
-            var manager = _dbContext.Worker.Find(workerId);
-
-            if (manager is null) return;
-            
-            // Change value directly in the DB
-            using var contextDB = new ApplicationDbContext();
-            contextDB.Database.ExecuteSqlRawAsync(
-                "UPDATE dbo.Worker SET Name += '_DB' WHERE WorkerID = {0}", workerId);
-
-            // Change the current value in memory
-            manager.Name += "_Memory";
-
-            string originalValue = _dbContext.Entry(manager).Property(m => m.Name).OriginalValue;
-            Console.WriteLine(string.Format("Original Value : {0}", originalValue));
-
-            string currentValue = _dbContext.Entry(manager).Property(m => m.Name).CurrentValue;
-            Console.WriteLine(string.Format("Current Value : {0}", currentValue));
-
-            string dbValue = _dbContext.Entry(manager).GetDatabaseValues().GetValue<string>("Name");
-            Console.WriteLine(string.Format("DB Value : {0}", dbValue));
-
-            //return old value back
-            contextDB.Database.ExecuteSqlRawAsync(
-                "UPDATE dbo.Worker SET Name = 'John' WHERE WorkerID = {0}", workerId);
-        }
     }
 }

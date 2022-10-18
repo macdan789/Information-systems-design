@@ -113,7 +113,7 @@ public class DbContext : IDisposable
     public int Update(Table table, string query)
     {
         var command = CreateCommand($"UPDATE dbo.{table} {query};");
-
+        
         return command.ExecuteNonQuery();
     }
 
