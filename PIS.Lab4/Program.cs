@@ -111,7 +111,7 @@ namespace PIS.Lab4
                 },
             };
             int affectedRows = 0;
-                
+
             foreach (var workplace in workplaces)
             {
                 affectedRows += workplace.Validate() ? await context.InsertEntity(workplace) : 0;

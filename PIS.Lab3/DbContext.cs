@@ -1,8 +1,8 @@
-﻿using System.Data;
+﻿using Microsoft.Extensions.Configuration;
 using PIS.Lab3.Models;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace PIS.Lab3;
 
@@ -113,7 +113,7 @@ public class DbContext : IDisposable
     public int Update(Table table, string query)
     {
         var command = CreateCommand($"UPDATE dbo.{table} {query};");
-        
+
         return command.ExecuteNonQuery();
     }
 
@@ -134,37 +134,37 @@ public class DbContext : IDisposable
         switch (objects.First())
         {
             case Worker:
-            {
-                var dataList = (objects as List<Worker>)!.Select(item => $"('{item.Name}', '{item.RooName}')").ToList();
+                {
+                    var dataList = (objects as List<Worker>)!.Select(item => $"('{item.Name}', '{item.RooName}')").ToList();
 
-                fields = "Name, ROOName";
-                values = string.Join(',', dataList);
-                break;
-            }
+                    fields = "Name, ROOName";
+                    values = string.Join(',', dataList);
+                    break;
+                }
             case Job:
-            {
-                var dataList = (objects as List<Job>)!.Select(item => $"('{item.Description}')").ToList();
+                {
+                    var dataList = (objects as List<Job>)!.Select(item => $"('{item.Description}')").ToList();
 
-                fields = "Description";
-                values = string.Join(',', dataList);
-                break;
-            }
+                    fields = "Description";
+                    values = string.Join(',', dataList);
+                    break;
+                }
             case WorkerJob:
-            {
-                var dataList = (objects as List<WorkerJob>)!.Select(item => $"({item.WorkerId}, {item.JobId})").ToList();
+                {
+                    var dataList = (objects as List<WorkerJob>)!.Select(item => $"({item.WorkerId}, {item.JobId})").ToList();
 
-                fields = "WorkerID, JobID";
-                values = string.Join(',', dataList);
-                break;
-            }
+                    fields = "WorkerID, JobID";
+                    values = string.Join(',', dataList);
+                    break;
+                }
             case ResidentialOperatingOffice:
-            {
-                var dataList = (objects as List<ResidentialOperatingOffice>)!.Select(item => $"('{item.ShortName}', '{item.LongName}', '{item.City}')").ToList();
+                {
+                    var dataList = (objects as List<ResidentialOperatingOffice>)!.Select(item => $"('{item.ShortName}', '{item.LongName}', '{item.City}')").ToList();
 
-                fields = "ShortName, LongName, City";
-                values = string.Join(',', dataList);
-                break;
-            }
+                    fields = "ShortName, LongName, City";
+                    values = string.Join(',', dataList);
+                    break;
+                }
         }
 
         var command = CreateCommand($"INSERT INTO dbo.{table}({fields}) VALUES {values};");
@@ -175,7 +175,7 @@ public class DbContext : IDisposable
     public object Select(Table table, string columnName, Dictionary<string, string> filterQuery = null)
     {
         var query = $"SELECT TOP 1 {columnName} FROM dbo.{table}";
-        
+
         if (filterQuery is not null)
         {
             var filterList = filterQuery.Select(item => $"{item.Key} = '{item.Value}'").ToList();
@@ -184,7 +184,7 @@ public class DbContext : IDisposable
         }
 
         var command = CreateCommand(query);
-        
+
         return command.ExecuteScalar();
     }
 

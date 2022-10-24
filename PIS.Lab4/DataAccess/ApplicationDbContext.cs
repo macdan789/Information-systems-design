@@ -17,7 +17,7 @@ namespace PIS.Lab4.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+
         }
     }
 
@@ -45,7 +45,7 @@ namespace PIS.Lab4.DataAccess
         public async Task<int> InsertEntity<T>(T entity) where T : class, new()
         {
             var type = new T();
-            
+
             if (type is Worker)
             {
                 var worker = entity as Worker;
@@ -104,7 +104,7 @@ namespace PIS.Lab4.DataAccess
             {
                 dbSet = _dbContext.Workplace as DbSet<T>;
             }
-            
+
             if (await dbSet.FindAsync(entityId) is T found)
             {
                 _dbContext.Entry(found).State = EntityState.Detached;
@@ -114,7 +114,7 @@ namespace PIS.Lab4.DataAccess
 
             return 0;
         }
-        
+
         public void Dispose() => _dbContext.Dispose();
 
         public void AuditWorker(int workerId)
@@ -122,7 +122,7 @@ namespace PIS.Lab4.DataAccess
             var manager = _dbContext.Worker.Find(workerId);
 
             if (manager is null) return;
-            
+
             // Change value directly in the DB
             using var contextDB = new ApplicationDbContext();
             contextDB.Database.ExecuteSqlRawAsync(

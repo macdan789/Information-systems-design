@@ -13,7 +13,7 @@ namespace PIS.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        
+
         public async Task<int> AddAsync(Worker entity)
         {
             await _dbContext.Worker.AddAsync(entity);
@@ -29,7 +29,7 @@ namespace PIS.DAL.Repositories
         public async Task<List<Worker>> GetAllAsync() => await _dbContext.Worker.ToListAsync();
 
         public async Task<Worker> GetAsync(int id) => await _dbContext.Worker.FirstOrDefaultAsync(x => x.WorkerID == id);
-        
+
         public async Task<int> UpdateAsync(Worker entity)
         {
             var entityEntry = _dbContext.Worker.Attach(entity);

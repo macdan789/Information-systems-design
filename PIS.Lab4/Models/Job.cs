@@ -2,7 +2,6 @@
 using PIS.Lab4.Validators;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace PIS.Lab4.Models
 {
@@ -19,7 +18,7 @@ namespace PIS.Lab4.Models
         public static bool Validate(this Job job)
         {
             var validator = new JobValidator();
-            
+
             ValidationResult results = validator.Validate(job);
 
             if (!results.IsValid)

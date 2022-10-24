@@ -39,15 +39,15 @@ namespace DataAccess
         {
             var newRoo = new ResidentialOperatingOffice
             {
-                City      = "TEST",
+                City = "TEST",
                 ShortName = "TEST",
-                LongName  = "TEST"
+                LongName = "TEST"
             };
 
             var newWorker = new Worker
             {
                 ResidentialOperatingOffice = newRoo,
-                Name                       = "TEST",
+                Name = "TEST",
                 ROOName = newRoo.ShortName
             };
 
@@ -69,7 +69,7 @@ namespace DataAccess
                 .Where(x => x.ShortName == rooNameToUpdate)
                 .ToList()
                 .Single();
-            
+
             rooToUpdate.LongName = "NEW TEST VALUE";
             rooToUpdate.Worker?.ToList().ForEach(worker => worker.Name = "NEW TEST VALUE");
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PIS.DAL.Models;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace PIS.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        
+
         public async Task<int> AddAsync(Job entity)
         {
             await _dbContext.Job.AddAsync(entity);

@@ -121,7 +121,7 @@ public class InMemoryDbContext
             new object[] { "TEST 4", "Desc of TEST 4", "City2" },
             new object[] { "TEST 5", "Desc of TEST 5", "City3" }
         };
-        foreach(object[] row in rooRows)
+        foreach (object[] row in rooRows)
             ResidentialOperatingOffice.Rows.Add(row);
 
         object[] workerRows =
@@ -179,7 +179,7 @@ public class InMemoryDbContext
         builder.Append('\n');
 
         foreach (DataRow row in table.Rows)
-        { 
+        {
             if (row.RowState != DataRowState.Deleted)
             {
                 foreach (DataColumn col in table.Columns)
@@ -196,7 +196,7 @@ public class InMemoryDbContext
 
     public void ShowAllTables()
     {
-        foreach(var table in new[] { Job, Worker, WorkerJob, ResidentialOperatingOffice })
+        foreach (var table in new[] { Job, Worker, WorkerJob, ResidentialOperatingOffice })
         {
             ShowTable(table);
         }

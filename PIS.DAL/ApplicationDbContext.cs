@@ -10,8 +10,8 @@ namespace PIS.DAL
         public DbSet<Job> Job { get; set; }
         public DbSet<Worker> Worker { get; set; }
         public DbSet<Workplace> Workplace { get; set; }
-        
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseSqlServer(_connectionString);
     }
 }
