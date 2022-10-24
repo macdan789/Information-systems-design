@@ -1,17 +1,23 @@
 ﻿using PIS.DAL;
 using PIS.DAL.Models;
+using PIS.DAL.Repositories;
 
-using IDbManager dbManager = new DbManager(new ApplicationDbContext());
+using ApplicationDbContext dbContext = new();
 
-List<Job> jobs = await dbManager.GetJobs();
+var jobRepository = new JobRepository(dbContext);
 
-Console.WriteLine("Jobs count: " + jobs.Count);
+var job = await jobRepository.GetAsync(1);
+Console.WriteLine($"Job: {job.Description} \t ID: {job.JobID}");
 
-int insertedRows = await dbManager.InsertEntity(new Job { Description = "New Job via Code", Priority = 10 });
+var jobs = await jobRepository.GetAllAsync();
+jobs.ForEach(job => Console.WriteLine($"Job: {job.Description} \t ID: {job.JobID}"));
 
-Console.WriteLine("Inserted rows: " + insertedRows);
+var workplaceRepository = new WorkplaceRepository(dbContext);
 
-List<Job> jobsAfterInsert = await dbManager.GetJobs();
-
-Console.WriteLine("Jobs count after insert: " + jobsAfterInsert.Count);
-Console.WriteLine("Last job:" + "\t" + jobsAfterInsert.Last().Description + " - " + jobsAfterInsert.Last().Priority);
+var affectedRows = await workplaceRepository.AddAsync(new Workplace
+{
+    ShortName = "Test",
+    LongName = "Test Test",
+    City = "Lviv"
+});
+Console.WriteLine($"Affected rows: {affectedRows}");

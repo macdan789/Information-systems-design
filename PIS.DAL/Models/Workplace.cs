@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PIS.DAL.Models
 {
-    public class Workplace
+    public class Workplace : IEntity
     {
         public int WorkplaceID { get; set; }
         public string ShortName { get; set; }
