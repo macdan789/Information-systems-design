@@ -4,7 +4,7 @@ using PIS.DAL.Repositories;
 
 using ApplicationDbContext dbContext = new();
 
-var jobRepository = new JobRepository(dbContext);
+var jobRepository = new BaseRepository<Job>(dbContext);
 
 var job = await jobRepository.GetAsync(1);
 Console.WriteLine($"Job: {job.Description} \t ID: {job.JobID}");
@@ -12,9 +12,9 @@ Console.WriteLine($"Job: {job.Description} \t ID: {job.JobID}");
 var jobs = await jobRepository.GetAllAsync();
 jobs.ForEach(job => Console.WriteLine($"Job: {job.Description} \t ID: {job.JobID}"));
 
-var workplaceRepository = new WorkplaceRepository(dbContext);
+var workplaceRepository = new BaseRepository<Workplace>(dbContext);
 
-var affectedRows = await workplaceRepository.AddAsync(new Workplace
+var affectedRows = await workplaceRepository.InsertAsync(new Workplace
 {
     ShortName = "Test",
     LongName = "Test Test",

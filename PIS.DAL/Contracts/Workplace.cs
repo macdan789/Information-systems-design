@@ -2,7 +2,7 @@
 
 namespace PIS.DAL.Models
 {
-    public class Workplace : IEntity
+    public class Workplace : BaseEntity
     {
         public int WorkplaceID { get; set; }
         public string ShortName { get; set; }

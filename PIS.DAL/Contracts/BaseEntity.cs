@@ -1,6 +1,6 @@
 ﻿namespace PIS.DAL.Models
 {
-    public interface IEntity
+    public class BaseEntity
     {
     }
 }

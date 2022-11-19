@@ -2,7 +2,7 @@
 
 namespace PIS.DAL.Models
 {
-    public class Job : IEntity
+    public class Job : BaseEntity
     {
         public int JobID { get; set; }
         public string Description { get; set; }

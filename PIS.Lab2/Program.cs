@@ -6,7 +6,7 @@ InMemoryDbContext dbContext = new();
 dbContext.ShowTable(dbContext.Job);
 dbContext.ShowAllTables();
 
-dbContext.FilterByDataView<string>(dbContext.ResidentialOperatingOffice, "City", "City1");
+dbContext.FilterByDataView(dbContext.ResidentialOperatingOffice, "City", "City1");
 dbContext.SortByDataView<string>(dbContext.ResidentialOperatingOffice, "City");
 
 //Change Row State to 'Unchanged' to all table rows

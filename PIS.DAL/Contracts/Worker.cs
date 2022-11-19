@@ -2,7 +2,7 @@
 
 namespace PIS.DAL.Models
 {
-    public class Worker : IEntity
+    public class Worker : BaseEntity
     {
         public int WorkerID { get; set; }
         public string Name { get; set; }
